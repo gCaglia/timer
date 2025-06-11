@@ -1,10 +1,13 @@
-<script>
+<script lang="ts">
+  import Timer from "./lib/timer/Timer.svelte";
 </script>
 
 <main>
   <h1 class="title">Focus Timer</h1>
   <div class="column">
-    <div class="timer-block">Timer Block</div>
+    <div class="timer-block">Timer Block
+      <Timer></Timer>
+      </div>
     <div class="video-embedding">Video Block</div>
   </div>
 </main>
