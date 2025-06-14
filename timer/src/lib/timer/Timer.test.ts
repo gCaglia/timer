@@ -18,56 +18,41 @@ describe('Timer', () => {
         }
     );
 
-    it('should record start time', () => {
-        let expected_start_time = Date.now();
-        timer.start(0, 0, 5);
-        expect(timer.start_time).toBe(expected_start_time)
-    });
-
-    it('should calculate the end time', () => {
-        timer.start(0, 0, 5)
-        expect(timer.start_time).not.toBeNull();
-
-        if (timer.start_time) {
-            let expected_end_time = new Date(timer.start_time.getTime());
-            expected_end_time.setSeconds(expected_end_time.getSeconds() + 5);
-            expect(timer.end_time).toBe(expected_end_time);
-
-        }
-    });
-
-    it('should run for duration', () => {
-        timer.start(0, 0, 5);
-        expect(timer.remaining).toEqual([0, 0, 5]);
+    it('should run for duration', async () => {
+        const promise = timer.start(0, 0, 5);
+        expect(timer.remainingMs).toBe(5000);
 
         vi.advanceTimersByTime(1000);
-        expect(timer.remaining).toEqual([0, 0, 4]);
+        expect(timer.remainingMs).toBe(4000);
         
-        vi.advanceTimersByTime(1000);
-        expect(timer.remaining).toEqual([0, 0, 0]);
+        vi.advanceTimersByTime(4000);
+        expect(timer.remainingMs).toBe(0);
+        await promise
     });
 
-    it('should stop and resume pause', () => {
-        timer.start(0, 0, 5);
+    it('should stop and resume pause', async () => {
+        const promise = timer.start(0, 0, 5);
         vi.advanceTimersByTime(1000);
-        expect(timer.remaining).toEqual([0, 0, 4]);
+        expect(timer.remainingMs).toBe(4000);
         expect(timer.is_running).toBe(true);
         timer.pause();
         expect(timer.is_running).toBe(false);
         vi.advanceTimersByTime(10000);
-        expect(timer.remaining).toEqual([0, 0, 4]);
+        expect(timer.remainingMs).toBe(4000);
         timer.pause();
         expect(timer.is_running).toBe(true);
         vi.advanceTimersByTime(4000);
-        expect(timer.remaining).toEqual([0, 0, 0]);
+        expect(timer.remainingMs).toBe(0);
+        await promise;
     });
 
-    it('should mark finish after duration', () => {
-        timer.start(0, 0, 5);
+    it('should mark finish after duration', async() => {
+        const promise = timer.start(0, 0, 5);
         expect(timer.has_finished).toBe(false);
         vi.advanceTimersByTime(5000);
-        expect(timer.remaining).toEqual([0, 0, 0])
+        expect(timer.remainingMs).toBe(0)
         expect(timer.has_finished).toBe(true);
+        await promise;
     })
 
     it('should throw if pause is called first', () => {
@@ -75,7 +60,18 @@ describe('Timer', () => {
             timer.pause();
         };
 
-        expect(badStart).toThrow("Start before pausing!")
+        expect(badStart).toThrow("Timer was not started!")
+    })
+
+    it('should parse timestamps', async () => {
+        let promise = timer.start(0, 0, 5);
+        expect(timer.getRemaining()).toEqual([0, 0, 5])
+        vi.advanceTimersByTime(5000);
+        await promise;
+        promise = timer.start(1, 2, 5);
+        expect(timer.getRemaining()).toEqual([1, 2, 5]);
+        vi.advanceTimersByTime((1*3600+2*60+5)*1000)
+        await promise;
     })
 })
 
