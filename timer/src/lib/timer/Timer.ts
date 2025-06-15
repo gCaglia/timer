@@ -1,7 +1,7 @@
 export class Timer {
     remainingMs: number;
-    is_running: Boolean = false;
-    has_finished: Boolean = false;
+    is_running: boolean = false;
+    has_finished: boolean = false;
 
     getRemaining(): [number, number, number] {
         let secondsTotal = Math.floor(this.remainingMs / 1000);
@@ -16,6 +16,7 @@ export class Timer {
         this.remainingMs = (hours*3600 + minutes*60  + seconds) * 1000;
 
         this.is_running = true;
+        this.has_finished = false;
         await new Promise<void>((resolve) => {
             const interval = setInterval(() => {
                 if (this.is_running) {
@@ -24,6 +25,7 @@ export class Timer {
                 if (this.remainingMs <= 0) {
                     clearInterval(interval);
                     this.has_finished = true;
+                    this.is_running = false;
                     resolve();
                 }
             }, 100);
