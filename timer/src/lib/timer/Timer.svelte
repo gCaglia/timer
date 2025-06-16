@@ -1,30 +1,59 @@
 <script lang="ts">
     import { Timer } from "../timer/Timer"
     let timer = new Timer()
-    let hoursDiv: HTMLDivElement;
-    let minutesDiv: HTMLDivElement;
-    let secondsDiv: HTMLDivElement;
+    let hoursString: string = "00";
+    let minutesString: string = "00";
+    let secondsString: string = "00";
     let hours: number = 0;
     let minutes: number = 0;
     let seconds: number = 0;
+    let pause_resume_label: string;
 
     let is_running: boolean;
     let has_finished: boolean;
 
+    $: pause_resume_label = is_running ? "Pause" : (has_finished===false ? "Resume" : "Start Timer");
+
     async function startTimer() {
-        console.log(seconds);
         let promise = timer.start(hours, minutes, seconds)
-        while (timer.is_running) {
-            [hours, minutes, seconds] = timer.getRemaining()
-            is_running = timer.is_running;
-            has_finished = timer.has_finished;
-            await new Promise(r => setTimeout(r, 1000))
+        is_running = true
+        while (is_running) {
+            updateValues()
+            await new Promise(r => setTimeout(r, 1))
         }
+        updateValues()
         await promise
     }
 
-    function prettyString(number: number): String {
-        return number.toString().padStart(2, "0")
+    function updateValues() {
+        [hours, minutes, seconds] = timer.getRemaining()
+        secondsString = seconds.toString().padStart(2, "0")
+        minutesString = minutes.toString().padStart(2, "0")
+        hoursString = hours.toString().padStart(2, "0")
+        is_running = timer.is_running;
+        has_finished = timer.has_finished;
+    }
+
+    function setValues(event) {
+        seconds = parseInt(secondsString);
+        secondsString = seconds.toString().padStart(2, "0");
+        minutes = parseInt(minutesString);
+        minutesString = minutes.toString().padStart(2, "0");
+        hours = parseInt(hoursString);
+        hoursString = hours.toString().padStart(2, "0");
+    }
+    function pause_resume() {
+        if (is_running) {
+            timer.pause();
+            updateValues();
+        } else if (has_finished === false) {
+            timer.pause(); // Not running, but has been started -> Resume
+            console.log("before resuming...", is_running)
+            updateValues();
+            console.log("after resuming...", is_running)
+        } else {
+            startTimer();
+        }
     }
 </script>
 
@@ -34,31 +63,40 @@
     <p>Has finished: {has_finished}</p>
         <div class="timer">
             <div
-                class="time-number-box"
-                contenteditable="true"
-                bind:this={hoursDiv}
-                on:input={() => hours = parseInt(hoursDiv.innerText || '0')}>
-                {prettyString(hours)}
+                class="time-number-box">
+                <input
+                    type="text"
+                    name="hours"
+                    class="input-box"
+                    bind:value={hoursString}
+                    on:change={setValues}
+                    >
             </div>
             <div class="divider">:</div>
             <div
-                class="time-number-box"
-                contenteditable="true"
-                bind:this={minutesDiv}
-                on:input={() => minutes = parseInt(minutesDiv.innerText || '0')}>
-                {prettyString(minutes)}
+                class="time-number-box">
+                <input
+                    type="text"
+                    name="minutes"
+                    class="input-box"
+                    bind:value={minutesString}
+                    on:change={setValues}
+                    >
             </div>
             <div class="divider">:</div>
             <div
-                class="time-number-box-small"
-                contenteditable="true"
-                bind:this={secondsDiv}
-                on:input={() => seconds = parseInt(secondsDiv.innerText || '0')}>
-                {prettyString(seconds)}
+                class="time-number-box-small">
+                <input
+                    type="text"
+                    name="seconds"
+                    class="input-box"
+                    bind:value={secondsString}
+                    on:change={setValues}
+                    >
             </div>
         </div>
-        <button class="start-timer-button" on:click={startTimer}>
-            Start Timer
+        <button class="start-timer-button" on:click={pause_resume}>
+            {pause_resume_label}
         </button>
     </div>
 </main>
@@ -68,7 +106,7 @@
     display: flex;
     flex-direction: row;
     align-items: flex-end;
-    gap: 1%;
+    gap: 10%;
     margin: 10%;
 }
 .time-number-box {
@@ -76,12 +114,13 @@
     background-color: antiquewhite;
     border-radius: 15px;
     color: black;
+    width: 60px;
 }
 .time-number-box-small {
     @extend .time-number-box;
     transform: scale(0.7);
     transform-origin: bottom left;
-    // font-size: 35px;
+    width: 60px;
 }
 .divider {
     font-size: 50px;
@@ -92,4 +131,7 @@
     color: black;
     margin-left: 20%;
 }
+.input-box {
+    @extend .time-number-box;
+    max-width: 100%;}
 </style>
