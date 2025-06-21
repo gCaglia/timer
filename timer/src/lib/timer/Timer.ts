@@ -12,8 +12,16 @@ export class Timer {
         return [hours, minutes, seconds]
     }
 
+    private async getMs(hours: number, minutes: number, seconds: number): Promise<number> {
+        return (hours*3600 + minutes*60  + seconds) * 1000;
+    }
+
+    async set(hours: number, minutes: number, seconds: number): Promise<void> {
+        this.remainingMs = await this.getMs(hours, minutes, seconds);
+    }
+
     async start(hours: number, minutes: number, seconds: number): Promise<void> {
-        this.remainingMs = (hours*3600 + minutes*60  + seconds) * 1000;
+        this.remainingMs = await this.getMs(hours, minutes, seconds);
 
         this.is_running = true;
         this.has_finished = false;

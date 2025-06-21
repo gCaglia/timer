@@ -5,7 +5,7 @@
 <main>
   <h1 class="title">Focus Timer</h1>
   <div class="column">
-    <div class="timer-block">Timer Block
+    <div class="timer-block">
       <Timer></Timer>
       </div>
     <div class="video-embedding">Video Block</div>

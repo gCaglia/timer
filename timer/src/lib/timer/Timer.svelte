@@ -1,6 +1,6 @@
 <script lang="ts">
     import { Timer } from "../timer/Timer"
-    let timer = new Timer()
+    let timer: Timer
     let hoursString: string = "00";
     let minutesString: string = "00";
     let secondsString: string = "00";
@@ -15,10 +15,17 @@
     $: pause_resume_label = is_running ? "Pause" : (has_finished===false ? "Resume" : "Start Timer");
 
     async function startTimer() {
+        timer = new Timer()
+        if (hours == 0 && minutes == 0 && seconds == 0) {
+            return 
+        }
         let promise = timer.start(hours, minutes, seconds)
         is_running = true
-        while (is_running) {
-            updateValues()
+        has_finished = false
+        while (!timer.has_finished) {
+            if (timer.is_running) {
+                updateValues();
+            }
             await new Promise(r => setTimeout(r, 1))
         }
         updateValues()
@@ -41,16 +48,18 @@
         minutesString = minutes.toString().padStart(2, "0");
         hours = parseInt(hoursString);
         hoursString = hours.toString().padStart(2, "0");
+        if (timer !== undefined) {
+            timer.set(hours, minutes, seconds);
+        }
     }
+
     function pause_resume() {
         if (is_running) {
             timer.pause();
             updateValues();
         } else if (has_finished === false) {
             timer.pause(); // Not running, but has been started -> Resume
-            console.log("before resuming...", is_running)
             updateValues();
-            console.log("after resuming...", is_running)
         } else {
             startTimer();
         }
@@ -59,8 +68,6 @@
 
 <main>
     <div class="timer-main">
-    <p>Is running: {is_running}</p>
-    <p>Has finished: {has_finished}</p>
         <div class="timer">
             <div
                 class="time-number-box">
