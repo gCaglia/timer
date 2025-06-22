@@ -1,5 +1,6 @@
 <script lang="ts">
   import Timer from "./lib/timer/Timer.svelte";
+  import Player from "./lib/player/Player.svelte"
 </script>
 
 <main>
@@ -7,8 +8,10 @@
   <div class="column">
     <div class="timer-block">
       <Timer></Timer>
-      </div>
-    <div class="video-embedding">Video Block</div>
+    </div>
+    <div class="video-embedding">
+      <Player videoId="Y1o4twAUmZo"></Player>
+    </div>
   </div>
 </main>
 
@@ -16,18 +19,18 @@
 .timer-block {
   color: blue;
   border: 2px solid black;
-  padding-top: 150px;
-  padding-bottom: 150px;
-  padding-left: 300px;
-  padding-right: 300px;
+  padding-top: 50px;
+  padding-bottom: 50px;
+  padding-left: 100px;
+  padding-right: 100px;
 }
 .video-embedding {
   color: red;
   border: 2px solid black;
-  padding-top: 150px;
-  padding-bottom: 150px;
-  padding-left: 400px;
-  padding-right: 400px;
+  padding-top: 50px;
+  padding-bottom: 50px;
+  padding-left: 50px;
+  padding-right: 50px;
 }
 
 .column {
