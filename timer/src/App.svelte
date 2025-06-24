@@ -10,7 +10,7 @@
       <Timer></Timer>
     </div>
     <div class="video-embedding">
-      <Player videoId="Y1o4twAUmZo"></Player>
+      <Player></Player>
     </div>
   </div>
 </main>
