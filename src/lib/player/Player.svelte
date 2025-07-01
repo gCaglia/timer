@@ -1,9 +1,13 @@
 <script lang="ts">
     import { onMount } from 'svelte'
 
+    export let timerDone: boolean;
     let videoId = "BzxVZ4SD8uk";
     let player: YT.Player;
     let container;
+    let playbackSetting: string = "0";
+    let playback: number;
+    $: playback = parseInt(playbackSetting);
 
     onMount(() => {
         if (!window.YT) {
@@ -38,6 +42,16 @@
             initializePlayer()
         }
     }
+
+    $: if (timerDone) {
+        if (playback === 0) {
+            player.playVideo();
+        }
+        if (playback === 1) {
+            player.pauseVideo();
+        }
+        timerDone = false; // Reset timer variable
+    }
 </script>
 <main class="video-box">
     <div>
@@ -47,11 +61,11 @@
     <form>
         <div class="radio-buttons">
             <div>
-                <input type="radio" id="start-on-play" name="playback" value=0>
+                <input type="radio" id="start-on-play" name="playback" value=0 bind:group={playbackSetting}>
                 <label for="start-on-play">Start on Timer End</label>
             </div>
             <div>
-                <input type="radio" id="stop-on-play" name="playback" value=1>
+                <input type="radio" id="stop-on-play" name="playback" value=1 bind:group={playbackSetting}>
                 <label for="stop-on-play">Stop on Timer End</label>
             </div>
         </div>

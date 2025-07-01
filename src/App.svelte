@@ -1,16 +1,26 @@
 <script lang="ts">
   import Timer from "./lib/timer/Timer.svelte";
   import Player from "./lib/player/Player.svelte"
+
+  let timerDone: boolean;
+
+  function handleTimerDone() {
+    timerDone = true;
+  }
+
+  function handleTimerStart() {
+    timerDone = false;
+  }
 </script>
 
 <main>
   <h1 class="title">Focus Timer</h1>
   <div class="column">
     <div class="timer-block">
-      <Timer></Timer>
+      <Timer onDone={handleTimerDone} onStart={handleTimerStart}></Timer>
     </div>
     <div class="video-embedding">
-      <Player></Player>
+      <Player timerDone={timerDone}></Player>
     </div>
   </div>
 </main>

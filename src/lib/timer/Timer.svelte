@@ -1,5 +1,8 @@
 <script lang="ts">
     import { Timer } from "../timer/Timer"
+
+    export let onDone;
+    export let onStart;
     let timer: Timer
     let hoursString: string = "00";
     let minutesString: string = "00";
@@ -15,6 +18,7 @@
     $: pause_resume_label = is_running ? "Pause" : (has_finished===false ? "Resume" : "Start Timer");
 
     async function startTimer() {
+        onStart()
         timer = new Timer()
         if (hours == 0 && minutes == 0 && seconds == 0) {
             return 
@@ -28,7 +32,8 @@
             }
             await new Promise(r => setTimeout(r, 1))
         }
-        updateValues()
+        updateValues();
+        onDone();
         await promise
     }
 
