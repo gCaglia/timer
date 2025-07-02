@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "serve": "serve dist -l 5001"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^5.0.3",
@@ -19,5 +20,8 @@
     "svelte": "^5.28.1",
     "vite": "^6.3.5",
     "vitest": "^3.2.3"
+  },
+  "dependencies": {
+    "serve": "^14.2.4"
   }
 }
