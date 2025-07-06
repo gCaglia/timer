@@ -1,15 +1,19 @@
 export class Timer {
-    remainingMs: number;
-    is_running: boolean = false;
-    has_finished: boolean = false;
+    isRunning: boolean = false;
+    hasFinished: boolean = false;
+    endTime: number;
 
     getRemaining(): [number, number, number] {
-        let secondsTotal = Math.floor(this.remainingMs / 1000);
+        if (!this.endTime) {
+            return [0, 0, 0]
+        }
+        const remainingMs = this.endTime - Date.now();
+        let secondsTotal = Math.floor(remainingMs / 1000);
         let hours = Math.floor(secondsTotal / 3600);
         let minutes = Math.floor(secondsTotal%3600 / 60)
         let seconds = Math.floor(secondsTotal%3600%60)
 
-        return [hours, minutes, seconds]
+        return [Math.max(hours, 0), Math.max(minutes, 0), Math.max(seconds, 0)]
     }
 
     private async getMs(hours: number, minutes: number, seconds: number): Promise<number> {
@@ -17,37 +21,29 @@ export class Timer {
     }
 
     async set(hours: number, minutes: number, seconds: number): Promise<void> {
-        this.remainingMs = await this.getMs(hours, minutes, seconds);
+        this.endTime = Date.now() + await this.getMs(hours, minutes, seconds);
     }
 
     async start(hours: number, minutes: number, seconds: number): Promise<void> {
-        this.remainingMs = await this.getMs(hours, minutes, seconds);
-
-        this.is_running = true;
-        this.has_finished = false;
-        await new Promise<void>((resolve) => {
-            const interval = setInterval(() => {
-                if (this.is_running) {
-                    this.remainingMs -= 100
-                }
-                if (this.remainingMs <= 0) {
-                    clearInterval(interval);
-                    this.has_finished = true;
-                    this.is_running = false;
-                    resolve();
-                }
-            }, 100);
-        })
-
+        this.endTime = Date.now() + await this.getMs(hours, minutes, seconds)
+        
+        this.isRunning = true;
+        this.hasFinished = false;
+        let currentTime = Date.now();
+        while (this.isRunning && (currentTime < this.endTime)) {
+            currentTime = Date.now();
+            await new Promise(resolve => setTimeout(resolve, 100))
+        }
+        this.isRunning = false;
+        if (currentTime >= this.endTime) {
+            this.hasFinished = true;
+        }
     }
+
     pause(): void {
-        if (this.remainingMs == null) {
-            throw new Error("Timer was not started!")
+        if (!this.endTime) {
+            throw Error("Timer was not started!");
         }
-        if (this.is_running) {
-            this.is_running = false
-            return
-        }
-        this.is_running = true
-    } // Should break if called first
+        this.isRunning = false;
+    }
 }

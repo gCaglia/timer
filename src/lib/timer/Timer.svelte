@@ -26,11 +26,11 @@
         let promise = timer.start(hours, minutes, seconds)
         is_running = true
         has_finished = false
-        while (!timer.has_finished) {
-            if (timer.is_running) {
+        while (!timer.hasFinished) {
+            if (timer.isRunning) {
                 updateValues();
             }
-            await new Promise(r => setTimeout(r, 1))
+            await new Promise(r => setTimeout(r, 100))
         }
         updateValues();
         onDone();
@@ -42,8 +42,8 @@
         secondsString = seconds.toString().padStart(2, "0")
         minutesString = minutes.toString().padStart(2, "0")
         hoursString = hours.toString().padStart(2, "0")
-        is_running = timer.is_running;
-        has_finished = timer.has_finished;
+        is_running = timer.isRunning;
+        has_finished = timer.hasFinished;
     }
 
     function setValues(event) {
@@ -62,11 +62,9 @@
         if (is_running) {
             timer.pause();
             updateValues();
-        } else if (has_finished === false) {
-            timer.pause(); // Not running, but has been started -> Resume
-            updateValues();
         } else {
             startTimer();
+            updateValues();
         }
     }
 </script>
