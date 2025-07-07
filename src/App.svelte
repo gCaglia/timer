@@ -59,6 +59,7 @@
   min-height: 18vh;
   box-sizing: border-box;
   display: flex;
+  flex-direction: column;
 }
 .main {
   display: flex;
