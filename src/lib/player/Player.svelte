@@ -2,14 +2,15 @@
     import { onMount } from 'svelte'
 
     export let timerDone: boolean;
-    let videoId = "BzxVZ4SD8uk";
+    let videoId = "mWQtmzg5VSU";
+    let videoErrorMessage: string;
     let player: YT.Player;
     let container;
     let playbackSetting: string = "0";
     let playback: number;
     $: playback = parseInt(playbackSetting);
 
-    onMount(() => {
+    function mountPlayer(): void {
         if (!window.YT) {
             const tag = document.createElement('script');
             tag.src = "https://www.youtube.com/iframe_api";
@@ -18,24 +19,35 @@
         } else {
             initializePlayer();
         }
-    });
+    }
+
+    onMount(mountPlayer)
 
     function initializePlayer() {
         if (player) {
             player.destroy();
         }
-        player = new YT.Player(container, {
-            videoId,
-            events: {
-                onReady: () => console.log("Player ready"),
-                onStateChange: (event) => console.log("State change:", event.data)
-            },
-            playerVars: {
-                rel: 0,
-                modestbranding: 1,
-                enablejsapi: 1
-            }
-        });
+        try {
+            player = new YT.Player(container, {
+                videoId,
+                events: {
+                    onReady: () => console.log("Player ready"),
+                    onStateChange: (event) => console.log("State change:", event.data),
+                    onError: (event) => {
+                        console.log("YouTube Player Error", event.data);
+                    }
+                },
+                playerVars: {
+                    rel: 0,
+                    modestbranding: 1,
+                    enablejsapi: 1
+                }
+            });
+            videoErrorMessage = "";
+        } catch (error) {
+            videoErrorMessage = error.message
+            console.log(videoErrorMessage)
+        }
     }
     function keypress(event) {
         if (event.key === "Enter") {
@@ -57,7 +69,7 @@
     <div>
         <input type="text" bind:value={videoId} name="videoId" on:keypress={(e) => keypress(e)}>
     </div>
-    <div bind:this={container} class="yt-container"></div>
+    <div bind:this={container} class="yt-container">{videoErrorMessage}</div>
     <form>
         <div class="radio-buttons">
             <div>
@@ -70,6 +82,9 @@
             </div>
         </div>
     </form>
+    {#if videoErrorMessage != ""}
+        <div class="video-box__error">{videoErrorMessage}</div>
+    {/if}
 </main>
 
 <style lang="scss">
@@ -77,6 +92,7 @@
         display: flex;
         flex-direction: column;
         gap: 5px;
+        align-items: center;
     }
     .yt-container {
         aspect-ratio: 16/9;
@@ -88,5 +104,12 @@
         display: flex;
         flex-direction: row;
         justify-content: center;
+    }
+    .video-box__error {
+        background-color: orange;
+        color: black;
+        font-weight: bold;
+        padding-left: 5%;
+        padding-right: 5%;
     }
 </style>
