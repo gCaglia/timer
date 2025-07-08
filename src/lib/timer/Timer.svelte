@@ -44,6 +44,7 @@
         hoursString = hours.toString().padStart(2, "0")
         is_running = timer.isRunning;
         has_finished = timer.hasFinished;
+        document.title = `⏳ ${hoursString}:${minutesString}:${secondsString}`
     }
 
     function setValues(event) {
