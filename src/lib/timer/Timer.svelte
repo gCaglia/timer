@@ -67,12 +67,19 @@
         }
     }
 
-    function pause_resume() {
+    function pause_resume_start() {
         if (is_running) {
             timer.pause();
             updateValues();
         } else {
             startTimer();
+        }
+    }
+
+    function keypress(event): void {
+        if (event.key == "Enter") {
+            setValues(event)
+            pause_resume_start();
         }
     }
 </script>
@@ -88,6 +95,7 @@
                     class="input-box"
                     bind:value={hoursString}
                     on:change={setValues}
+                    on:keypress={(e) => keypress(e)}
                     >
             </div>
             <div class="divider">:</div>
@@ -99,6 +107,7 @@
                     class="input-box"
                     bind:value={minutesString}
                     on:change={setValues}
+                    on:keypress={(e) => keypress(e)}
                     >
             </div>
             <div class="divider">:</div>
@@ -110,10 +119,11 @@
                     class="input-box"
                     bind:value={secondsString}
                     on:change={setValues}
+                    on:keypress={(e) => keypress(e)}
                     >
             </div>
         </div>
-        <button class="start-timer-button" on:click={pause_resume}>
+        <button class="start-timer-button" on:click={pause_resume_start}>
             {pause_resume_label}
         </button>
     </div>
