@@ -18,6 +18,9 @@
     $: pause_resume_label = is_running ? "Pause" : (has_finished===false ? "Resume" : "Start Timer");
 
     async function startTimer() {
+        if (timer && timer.isRunning) {
+            return
+        }
         onStart()
         timer = new Timer()
         if (hours == 0 && minutes == 0 && seconds == 0) {
