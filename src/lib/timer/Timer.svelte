@@ -50,12 +50,17 @@
         document.title = `⏳ ${hoursString}:${minutesString}:${secondsString}`
     }
 
+    function parseIntFallback(string: string, fallback: number): number {
+        const parsed = parseInt(string)
+        return isNaN(parsed) ? fallback : parsed;
+    }
+
     function setValues(event) {
-        seconds = parseInt(secondsString);
+        seconds = parseIntFallback(secondsString, 0);
         secondsString = seconds.toString().padStart(2, "0");
-        minutes = parseInt(minutesString);
+        minutes = parseIntFallback(minutesString, 0);
         minutesString = minutes.toString().padStart(2, "0");
-        hours = parseInt(hoursString);
+        hours = parseIntFallback(hoursString, 0);
         hoursString = hours.toString().padStart(2, "0");
         if (timer !== undefined) {
             timer.set(hours, minutes, seconds);
