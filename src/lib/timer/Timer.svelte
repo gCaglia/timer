@@ -68,7 +68,6 @@
             updateValues();
         } else {
             startTimer();
-            updateValues();
         }
     }
 </script>
