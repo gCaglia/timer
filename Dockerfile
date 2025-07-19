@@ -9,6 +9,7 @@ RUN apk add npm
 # Set up user
 RUN adduser -D timer
 USER timer
+WORKDIR /home/timer/app
 
 # Set up files
 COPY --chown=timer:timer . .
