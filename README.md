@@ -28,7 +28,7 @@ npm run serve
 ```bash
 bash run_container.sh
 ```
-Where run_container.sh takes the following positional arguments:
+Where `run_container.sh` takes the following positional arguments:
 - Container service to use. E.g. "docker" or "podman". Defaults to "podman".
 - Port to use. Defaults to 80.
 - Name to use for container. Defaults to timer-app.
